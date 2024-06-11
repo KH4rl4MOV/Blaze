@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'profile_screen.dart';
+import 'notebook_screen.dart';
+import 'workout_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -52,7 +54,10 @@ class HomeScreen extends StatelessWidget {
                     icon: Icons.fitness_center,
                     text: 'Workout',
                     onTap: () {
-                      // Перейти на экран тренировок
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => WorkoutScreen()),
+                      );
                     },
                   ),
                   _buildMenuItem(
@@ -60,7 +65,10 @@ class HomeScreen extends StatelessWidget {
                     icon: Icons.note,
                     text: 'Notebook',
                     onTap: () {
-                      // Перейти на экран блокнота
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => NotebookScreen()),
+                      );
                     },
                   ),
                   _buildMenuItem(

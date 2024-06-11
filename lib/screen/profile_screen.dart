@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'notebook_screen.dart';
 import 'user_goals_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -72,7 +73,10 @@ class ProfileScreen extends StatelessWidget {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                // Переход к экране истории тренировок
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => NotebookScreen()),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
@@ -82,7 +86,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Training History',
+                'Notebook',
                 style: TextStyle(fontSize: 16),
               ),
             ),
