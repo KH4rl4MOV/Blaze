@@ -1,3 +1,4 @@
+import 'package:blaze/screen/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screen/home_screen.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.blue,
               visualDensity: VisualDensity.adaptivePlatformDensity,
             ),
-            home: HomeScreen(),
+            home: WelcomeScreen(),
             builder: (context, child) {
               return Container(
                 decoration: BoxDecoration(
