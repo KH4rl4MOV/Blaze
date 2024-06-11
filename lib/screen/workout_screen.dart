@@ -1,39 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../theme_provider.dart';
 import 'chat_screen.dart';
 
 class WorkoutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text('Workout'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildWorkoutButton(context, 'Fat Burning Workout'),
-                  _buildWorkoutButton(context, 'Training For Weight Gain'),
-                  _buildWorkoutButton(context, 'Strength Training'),
-                  _buildCustomWorkoutButton(context),
-                ],
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            title: Text('Workout'),
+          ),
+          body: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(themeProvider.getBackgroundImage()),
+                fit: BoxFit.cover,
               ),
             ),
-          ],
-        ),
-      ),
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    children: [
+                      _buildWorkoutButton(context, 'Fat Burning Workout'),
+                      _buildWorkoutButton(context, 'Training For Weight Gain'),
+                      _buildWorkoutButton(context, 'Strength Training'),
+                      _buildCustomWorkoutButton(context),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -51,7 +63,7 @@ class WorkoutScreen extends StatelessWidget {
         },
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 20),
-          backgroundColor: Colors.grey[900],
+          backgroundColor: Colors.grey[900]?.withOpacity(0.7),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
             side: BorderSide(color: Colors.red),
@@ -74,7 +86,7 @@ class WorkoutScreen extends StatelessWidget {
         },
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 20),
-          backgroundColor: Colors.grey[900],
+          backgroundColor: Colors.grey[900]?.withOpacity(0.7),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
             side: BorderSide(color: Colors.red),
