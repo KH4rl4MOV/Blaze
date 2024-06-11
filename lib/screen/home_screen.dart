@@ -3,6 +3,7 @@ import 'profile_screen.dart';
 import 'notebook_screen.dart';
 import 'workout_screen.dart';
 import 'settings_screen.dart';
+import 'privacy_policy_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -87,9 +88,17 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16),
-            Text(
-              'Privacy Policy',
-              style: TextStyle(color: Colors.white, fontSize: 16, decoration: TextDecoration.underline),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PrivacyPolicyScreen()),
+                );
+              },
+              child: Text(
+                'Privacy Policy',
+                style: TextStyle(color: Colors.white, fontSize: 16, decoration: TextDecoration.underline),
+              ),
             ),
           ],
         ),
