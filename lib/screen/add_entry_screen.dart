@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import '../theme_provider.dart';
 
@@ -10,9 +11,37 @@ class AddEntryScreen extends StatefulWidget {
 class _AddEntryScreenState extends State<AddEntryScreen> {
   final TextEditingController _entryController = TextEditingController();
 
-  void _saveEntry() {
-    // Здесь будет логика сохранения записи
-    Navigator.pop(context);
+  void _saveEntry() async {
+    String newEntry = _entryController.text.trim();
+    if (newEntry.isNotEmpty) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      List<String> entries = prefs.getStringList('user_entries') ?? [];
+      entries.add(newEntry);
+      await prefs.setStringList('user_entries', entries);
+      Navigator.pop(context, true); // Возвращаемся на предыдущий экран и обновляем список
+    } else {
+      _showErrorDialog();
+    }
+  }
+
+  void _showErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text('Entry cannot be empty.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

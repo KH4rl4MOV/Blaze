@@ -1,9 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import '../theme_provider.dart';
 import 'add_entry_screen.dart';
 
-class NotebookScreen extends StatelessWidget {
+class NotebookScreen extends StatefulWidget {
+  @override
+  _NotebookScreenState createState() => _NotebookScreenState();
+}
+
+class _NotebookScreenState extends State<NotebookScreen> {
+  List<String> _userEntries = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEntries();
+  }
+
+  Future<void> _loadEntries() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userEntries = prefs.getStringList('user_entries') ?? [];
+    });
+  }
+
+  Future<void> _deleteEntry(int index) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> entries = prefs.getStringList('user_entries') ?? [];
+    if (index < entries.length) {
+      entries.removeAt(index);
+      await prefs.setStringList('user_entries', entries);
+      setState(() {
+        _userEntries = entries;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
@@ -31,33 +64,35 @@ class NotebookScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
+                ListTile(
+                  title: Text('New Entry', style: TextStyle(color: Colors.white)),
+                  trailing: IconButton(
+                    icon: Icon(Icons.add_circle_outline, color: Colors.red),
+                    onPressed: () async {
+                      bool result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AddEntryScreen()),
+                      );
+                      if (result == true) {
+                        _loadEntries(); // Обновляем список после возврата с экрана добавления записи
+                      }
+                    },
+                  ),
+                ),
                 Expanded(
-                  child: ListView(
-                    children: [
-                      // Здесь будут отображаться записи пользователя
-                      ListTile(
-                        title: Text('New Entry', style: TextStyle(color: Colors.white)),
+                  child: ListView.builder(
+                    itemCount: _userEntries.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(_userEntries[index], style: TextStyle(color: Colors.white)),
                         trailing: IconButton(
-                          icon: Icon(Icons.add_circle_outline, color: Colors.red),
+                          icon: Icon(Icons.delete, color: Colors.grey),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => AddEntryScreen()),
-                            );
+                            _deleteEntry(index);
                           },
                         ),
-                      ),
-                      // Пример записи
-                      ListTile(
-                        title: Text('Meeting Notes', style: TextStyle(color: Colors.white)),
-                        trailing: IconButton(
-                          icon: Icon(Icons.edit, color: Colors.grey),
-                          onPressed: () {
-                            // Открыть экран редактирования записи
-                          },
-                        ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
                 ),
               ],
