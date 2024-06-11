@@ -6,6 +6,10 @@ class ThemeProvider extends ChangeNotifier {
 
   int get themeIndex => _themeIndex;
 
+  ThemeProvider() {
+    loadTheme();
+  }
+
   Future<void> loadTheme() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _themeIndex = prefs.getInt('themeIndex') ?? 0;

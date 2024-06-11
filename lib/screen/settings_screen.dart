@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../theme_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -28,7 +30,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('themeIndex', _selectedThemeIndex);
     await prefs.setString('language', _selectedLanguage);
-    // Обновление фона или языка в приложении
   }
 
   void _changeTheme(int index) {
@@ -36,6 +37,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _selectedThemeIndex = index;
     });
     _saveSettings();
+    Provider.of<ThemeProvider>(context, listen: false).setTheme(index);
   }
 
   void _changeLanguage(String language) {
@@ -43,65 +45,74 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _selectedLanguage = language;
     });
     _saveSettings();
-    // Переключение языка в приложении
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text('Settings'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text(
-              'Choose A Theme',
-              style: TextStyle(color: Colors.white, fontSize: 18),
-            ),
-            SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildThemeButton(0, 'assets/theme1.jpg'),
-                _buildThemeButton(1, 'assets/theme2.jpg'),
-                _buildThemeButton(2, 'assets/theme3.jpg'),
-              ],
-            ),
-            SizedBox(height: 32),
-            Text(
-              'Language',
-              style: TextStyle(color: Colors.white, fontSize: 18),
-            ),
-            SizedBox(height: 16),
-            DropdownButton<String>(
-              value: _selectedLanguage,
-              dropdownColor: Colors.grey[800],
-              items: ['English', 'Русский'].map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value, style: TextStyle(color: Colors.white)),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                if (newValue != null) {
-                  _changeLanguage(newValue);
-                }
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
               },
             ),
-          ],
-        ),
-      ),
+            title: Text('Settings'),
+          ),
+          body: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(themeProvider.getBackgroundImage()),
+                fit: BoxFit.cover,
+              ),
+            ),
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Text(
+                  'Choose A Theme',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildThemeButton(0, 'assets/theme1.jpg'),
+                    _buildThemeButton(1, 'assets/theme2.jpg'),
+                    _buildThemeButton(2, 'assets/theme3.jpg'),
+                  ],
+                ),
+                SizedBox(height: 32),
+                Text(
+                  'Language',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+                SizedBox(height: 16),
+                DropdownButton<String>(
+                  value: _selectedLanguage,
+                  dropdownColor: Colors.grey[800],
+                  items: ['English', 'Русский'].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value, style: TextStyle(color: Colors.white)),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      _changeLanguage(newValue);
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
