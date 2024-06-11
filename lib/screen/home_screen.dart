@@ -1,11 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
 import 'profile_screen.dart';
 import 'notebook_screen.dart';
 import 'workout_screen.dart';
 import 'settings_screen.dart';
 import 'privacy_policy_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String _userName = 'User';
+  File? _avatarImage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userName = prefs.getString('name') ?? 'User';
+      String? avatarPath = prefs.getString('avatar_path');
+      if (avatarPath != null) {
+        _avatarImage = File(avatarPath);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,11 +47,13 @@ class HomeScreen extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 50,
-              backgroundImage: NetworkImage('https://example.com/user-photo.jpg'),
+              backgroundImage: _avatarImage != null ? FileImage(_avatarImage!) : null,
+              backgroundColor: Colors.grey,
+              child: _avatarImage == null ? Icon(Icons.person, size: 50, color: Colors.white) : null,
             ),
             SizedBox(height: 16),
             Text(
-              'Hello Kaitriona',
+              'Hello, $_userName',
               style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 32),
@@ -42,11 +71,11 @@ class HomeScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => ProfileScreen(
-                          userName: 'Kaitriona',
+                          userName: _userName,
                           age: 21,
                           weight: 65,
                           height: 160,
-                          profileImageUrl: 'https://example.com/user-photo.jpg',
+                          profileImageUrl: _avatarImage != null ? _avatarImage!.path : '',
                         )),
                       );
                     },
