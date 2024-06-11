@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import '../theme_provider.dart';
 import 'home_screen.dart';
 
@@ -13,12 +17,70 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
+  File? _avatarImage;
 
-  void _continue() {
-    // Здесь можно добавить проверку на заполненность полей и переход на главный экран
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _avatarImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  bool _areFieldsValid() {
+    return _nameController.text.isNotEmpty &&
+        _ageController.text.isNotEmpty &&
+        _weightController.text.isNotEmpty &&
+        _heightController.text.isNotEmpty &&
+        _avatarImage != null;
+  }
+
+  Future<void> _continue() async {
+    if (_areFieldsValid()) {
+      // Сохранение данных
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('name', _nameController.text);
+      await prefs.setInt('age', int.parse(_ageController.text));
+      await prefs.setInt('weight', int.parse(_weightController.text));
+      await prefs.setInt('height', int.parse(_heightController.text));
+
+      // Сохранение аватара
+      if (_avatarImage != null) {
+        final directory = await getApplicationDocumentsDirectory();
+        final imagePath = '${directory.path}/avatar.jpg';
+        await _avatarImage!.copy(imagePath);
+        await prefs.setString('avatar_path', imagePath);
+      }
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    } else {
+      _showErrorDialog();
+    }
+  }
+
+  void _showErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text('Please fill in all fields and select an avatar.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -40,10 +102,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.grey,
-                    child: Icon(Icons.person, size: 50, color: Colors.white),
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.grey,
+                      backgroundImage:
+                      _avatarImage != null ? FileImage(_avatarImage!) : null,
+                      child: _avatarImage == null
+                          ? Icon(Icons.person, size: 50, color: Colors.white)
+                          : null,
+                    ),
                   ),
                   SizedBox(height: 16.0),
                   TextField(
