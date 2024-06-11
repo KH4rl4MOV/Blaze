@@ -1,9 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import '../theme_provider.dart';
 import 'add_goal_screen.dart';
 
-class UserGoalsScreen extends StatelessWidget {
+class UserGoalsScreen extends StatefulWidget {
+  @override
+  _UserGoalsScreenState createState() => _UserGoalsScreenState();
+}
+
+class _UserGoalsScreenState extends State<UserGoalsScreen> {
+  List<String> _userGoals = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadGoals();
+  }
+
+  Future<void> _loadGoals() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userGoals = prefs.getStringList('user_goals') ?? [];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
@@ -31,33 +52,33 @@ class UserGoalsScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
+                ListTile(
+                  title: Text('New Goal', style: TextStyle(color: Colors.white)),
+                  trailing: IconButton(
+                    icon: Icon(Icons.add_circle_outline, color: Colors.red),
+                    onPressed: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AddGoalScreen()),
+                      );
+                      _loadGoals(); // Обновляем список после возврата с экрана добавления цели
+                    },
+                  ),
+                ),
                 Expanded(
-                  child: ListView(
-                    children: [
-                      // Здесь будут отображаться цели пользователя
-                      ListTile(
-                        title: Text('New Goal', style: TextStyle(color: Colors.white)),
-                        trailing: IconButton(
-                          icon: Icon(Icons.add_circle_outline, color: Colors.red),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => AddGoalScreen()),
-                            );
-                          },
-                        ),
-                      ),
-                      // Пример цели
-                      ListTile(
-                        title: Text('Lose 5 Kg', style: TextStyle(color: Colors.white)),
+                  child: ListView.builder(
+                    itemCount: _userGoals.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(_userGoals[index], style: TextStyle(color: Colors.white)),
                         trailing: IconButton(
                           icon: Icon(Icons.edit, color: Colors.grey),
                           onPressed: () {
                             // Открыть экран редактирования цели
                           },
                         ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
                 ),
               ],

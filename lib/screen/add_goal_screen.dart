@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import '../theme_provider.dart';
 
@@ -10,9 +11,37 @@ class AddGoalScreen extends StatefulWidget {
 class _AddGoalScreenState extends State<AddGoalScreen> {
   final TextEditingController _goalController = TextEditingController();
 
-  void _saveGoal() {
-    // Здесь будет логика сохранения цели
-    Navigator.pop(context);
+  void _saveGoal() async {
+    String newGoal = _goalController.text.trim();
+    if (newGoal.isNotEmpty) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      List<String> goals = prefs.getStringList('user_goals') ?? [];
+      goals.add(newGoal);
+      await prefs.setStringList('user_goals', goals);
+      Navigator.pop(context);
+    } else {
+      _showErrorDialog();
+    }
+  }
+
+  void _showErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text('Goal cannot be empty.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -48,7 +77,7 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                     maxLines: null,
                     style: TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      hintText: 'Enter the text',
+                      hintText: 'Enter the goal',
                       hintStyle: TextStyle(color: Colors.grey),
                       filled: true,
                       fillColor: Colors.grey[800]?.withOpacity(0.7),
