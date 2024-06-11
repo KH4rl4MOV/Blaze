@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../theme_provider.dart';
 
 class ChatScreen extends StatelessWidget {
   final String workoutTitle;
@@ -7,62 +9,74 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text(workoutTitle),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(16.0),
-              children: [
-                _buildChatMessage('You', workoutTitle),
-                _buildChatMessage('Trainer', 'Warm-up: Start with a 5-10 minute dynamic warm-up to get your heart rate up and loosen up your muscles.'),
-                _buildChatMessage('Trainer', 'HIIT Circuit: Perform a circuit of high-intensity interval training exercises. Do each exercise for 30 seconds, followed by a 10-second rest. Repeat the circuit 3-4 times.'),
-                _buildChatMessage('Trainer', 'Strength Training: Incorporate strength training exercises to build lean muscle mass and boost your metabolism. Do 3 sets of 12-15 reps of the following exercises:\n- Squats\n- Lunges\n- Push-ups'),
-              ],
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
+            title: Text(workoutTitle),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
+          body: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(themeProvider.getBackgroundImage()),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Column(
               children: [
                 Expanded(
-                  child: TextField(
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: 'Ask anything...',
-                      hintStyle: TextStyle(color: Colors.grey),
-                      filled: true,
-                      fillColor: Colors.grey[800],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
+                  child: ListView(
+                    padding: EdgeInsets.all(16.0),
+                    children: [
+                      _buildChatMessage('You', workoutTitle),
+                      _buildChatMessage('Trainer', 'Warm-up: Start with a 5-10 minute dynamic warm-up to get your heart rate up and loosen up your muscles.'),
+                      _buildChatMessage('Trainer', 'HIIT Circuit: Perform a circuit of high-intensity interval training exercises. Do each exercise for 30 seconds, followed by a 10-second rest. Repeat the circuit 3-4 times.'),
+                      _buildChatMessage('Trainer', 'Strength Training: Incorporate strength training exercises to build lean muscle mass and boost your metabolism. Do 3 sets of 12-15 reps of the following exercises:\n- Squats\n- Lunges\n- Push-ups'),
+                    ],
                   ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.send, color: Colors.red),
-                  onPressed: () {
-                    // Логика отправки сообщения
-                  },
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          style: TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: 'Ask anything...',
+                            hintStyle: TextStyle(color: Colors.grey),
+                            filled: true,
+                            fillColor: Colors.grey[800]?.withOpacity(0.7),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.send, color: Colors.red),
+                        onPressed: () {
+                          // Логика отправки сообщения
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -77,7 +91,7 @@ class ChatScreen extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: sender == 'You' ? Colors.red : Colors.grey[800],
+                color: sender == 'You' ? Colors.red : Colors.grey[800]?.withOpacity(0.7),
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: Text(
