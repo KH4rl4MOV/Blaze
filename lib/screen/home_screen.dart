@@ -70,13 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ProfileScreen(
-                          userName: _userName,
-                          age: 21,
-                          weight: 65,
-                          height: 160,
-                          profileImageUrl: _avatarImage != null ? _avatarImage!.path : '',
-                        )),
+                        MaterialPageRoute(builder: (context) => ProfileScreen()),
                       );
                     },
                   ),
