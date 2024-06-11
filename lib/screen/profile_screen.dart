@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'user_goals_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String userName;
@@ -12,7 +13,7 @@ class ProfileScreen extends StatelessWidget {
     required this.age,
     required this.weight,
     required this.height,
-    this.profileImageUrl = 'https://example.com/user-photo.jpg', // Укажите реальный URL изображения
+    this.profileImageUrl = 'https://example.com/user-photo.jpg',
   });
 
   @override
@@ -51,7 +52,10 @@ class ProfileScreen extends StatelessWidget {
             SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                // Переход к экране целей пользователя
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UserGoalsScreen()),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
