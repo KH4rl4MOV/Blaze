@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'profile_screen.dart';
 import 'notebook_screen.dart';
 import 'workout_screen.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: Padding(
@@ -18,11 +19,11 @@ class HomeScreen extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 50,
-              backgroundImage: NetworkImage('https://example.com/user-photo.jpg'), // Реальный URL изображения
+              backgroundImage: NetworkImage('https://example.com/user-photo.jpg'),
             ),
             SizedBox(height: 16),
             Text(
-              'Hello Kaitriona', // Приветствие
+              'Hello Kaitriona',
               style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 32),
@@ -76,7 +77,10 @@ class HomeScreen extends StatelessWidget {
                     icon: Icons.settings,
                     text: 'Settings',
                     onTap: () {
-                      // Перейти на экран настроек
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SettingsScreen()),
+                      );
                     },
                   ),
                 ],
