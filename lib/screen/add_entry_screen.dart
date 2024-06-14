@@ -51,15 +51,22 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
         return Scaffold(
           backgroundColor: Colors.black,
           appBar: AppBar(
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.transparent,
             elevation: 0,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            title: Text('Notebook'),
+            title: Text(
+              "Notebook",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
           ),
           body: Container(
             decoration: BoxDecoration(
@@ -100,7 +107,11 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                   ),
                   child: Text(
                     'Save',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white, // Белый цвет текста
+                      fontWeight: FontWeight.bold, // Жирный шрифт
+                    ),
                   ),
                 ),
               ],
