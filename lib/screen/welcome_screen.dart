@@ -99,113 +99,96 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
             padding: EdgeInsets.all(16.0),
             child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Colors.grey,
-                      backgroundImage:
-                      _avatarImage != null ? FileImage(_avatarImage!) : null,
-                      child: _avatarImage == null
-                          ? Icon(Icons.person, size: 50, color: Colors.white)
-                          : null,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Stack(
+                      children: [
+                        GestureDetector(
+                          onTap: _pickImage,
+                          child: CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Colors.grey,
+                            backgroundImage: _avatarImage != null
+                                ? FileImage(_avatarImage!)
+                                : AssetImage('assets/empty_avatar.png') as ImageProvider,
+                          ),
+                        ),
+                        Positioned(
+                          right: 0,
+                          bottom: 0,
+                          child: GestureDetector(
+                            onTap: _pickImage,
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 20,
+                              child: Icon(Icons.add_a_photo, color: Colors.black),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(height: 16.0),
-                  TextField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Name',
-                      filled: true,
-                      fillColor: Colors.grey[800]?.withOpacity(0.7),
-                      labelStyle: TextStyle(color: Colors.white),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                    SizedBox(height: 16.0),
+                    _buildTextField("Name", _nameController, TextInputType.text),
+                    SizedBox(height: 16.0),
+                    _buildTextField("Age", _ageController, TextInputType.number),
+                    SizedBox(height: 16.0),
+                    _buildTextField("Weight", _weightController, TextInputType.number),
+                    SizedBox(height: 16.0),
+                    _buildTextField("Height", _heightController, TextInputType.number),
+                    SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: _continue,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
-                      ),
-                    ),
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  SizedBox(height: 16.0),
-                  TextField(
-                    controller: _ageController,
-                    decoration: InputDecoration(
-                      labelText: 'Age',
-                      filled: true,
-                      fillColor: Colors.grey[800]?.withOpacity(0.7),
-                      labelStyle: TextStyle(color: Colors.white),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
-                      ),
-                    ),
-                    style: TextStyle(color: Colors.white),
-                    keyboardType: TextInputType.number,
-                  ),
-                  SizedBox(height: 16.0),
-                  TextField(
-                    controller: _weightController,
-                    decoration: InputDecoration(
-                      labelText: 'Weight',
-                      filled: true,
-                      fillColor: Colors.grey[800]?.withOpacity(0.7),
-                      labelStyle: TextStyle(color: Colors.white),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
+                      child: Text(
+                        'Continue',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
-                    style: TextStyle(color: Colors.white),
-                    keyboardType: TextInputType.number,
-                  ),
-                  SizedBox(height: 16.0),
-                  TextField(
-                    controller: _heightController,
-                    decoration: InputDecoration(
-                      labelText: 'Height',
-                      filled: true,
-                      fillColor: Colors.grey[800]?.withOpacity(0.7),
-                      labelStyle: TextStyle(color: Colors.white),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
-                      ),
-                    ),
-                    style: TextStyle(color: Colors.white),
-                    keyboardType: TextInputType.number,
-                  ),
-                  SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: _continue,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    child: Text(
-                      'Continue',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, TextInputType keyboardType) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        SizedBox(height: 8.0),
+        TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: 'Enter ${label.toLowerCase()}',
+            hintStyle: TextStyle(color: Colors.white54),
+            filled: true,
+            fillColor: Colors.grey[800]?.withOpacity(0.7),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.red),
+            ),
+          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          keyboardType: keyboardType,
+        ),
+      ],
     );
   }
 }
