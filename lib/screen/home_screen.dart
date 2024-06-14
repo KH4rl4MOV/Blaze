@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -47,9 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             CircleAvatar(
               radius: 50,
-              backgroundImage: _avatarImage != null ? FileImage(_avatarImage!) : null,
+              backgroundImage: _avatarImage != null ? FileImage(_avatarImage!) : AssetImage('assets/empty_avatar.png') as ImageProvider,
               backgroundColor: Colors.grey,
-              child: _avatarImage == null ? Icon(Icons.person, size: 50, color: Colors.white) : null,
             ),
             SizedBox(height: 16),
             Text(
@@ -65,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   _buildMenuItem(
                     context,
-                    icon: Icons.person,
+                    icon: 'assets/profile_icon.png',
                     text: 'Profile',
                     onTap: () {
                       Navigator.push(
@@ -76,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   _buildMenuItem(
                     context,
-                    icon: Icons.fitness_center,
+                    icon: 'assets/workout_icon.png',
                     text: 'Workout',
                     onTap: () {
                       Navigator.push(
@@ -87,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   _buildMenuItem(
                     context,
-                    icon: Icons.note,
+                    icon: 'assets/notebook_icon.png',
                     text: 'Notebook',
                     onTap: () {
                       Navigator.push(
@@ -98,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   _buildMenuItem(
                     context,
-                    icon: Icons.settings,
+                    icon: 'assets/settings_icon.png',
                     text: 'Settings',
                     onTap: () {
                       Navigator.push(
@@ -118,9 +117,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   MaterialPageRoute(builder: (context) => PrivacyPolicyScreen()),
                 );
               },
-              child: Text(
-                'Privacy Policy',
-                style: TextStyle(color: Colors.white, fontSize: 16, decoration: TextDecoration.underline),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Text(
+                  'Privacy Policy',
+                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ],
@@ -129,25 +131,47 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildMenuItem(BuildContext context, {required IconData icon, required String text, required VoidCallback onTap}) {
+  Widget _buildMenuItem(BuildContext context, {required String icon, required String text, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.grey[900],
+          color: Color(0xFF0F1A26),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.red, width: 2),
+          //border: Border.all(color: Colors.red, width: 2),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: Colors.red, size: 40),
-            SizedBox(height: 8),
-            Text(
-              text,
-              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          text,
+                          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 40),
+                        Image.asset(icon, height: 40, color: Colors.red),
+                      ],
+                    ),
+                    Spacer(),
+                    Container(
+                      height: 120,
+                      width: 2,
+                      color: Colors.red,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
