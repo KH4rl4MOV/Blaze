@@ -65,15 +65,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return Scaffold(
           backgroundColor: Colors.black,
           appBar: AppBar(
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.transparent,
             elevation: 0,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            title: Text('Profile'),
+            title: Text(
+              'Profile',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
           ),
           body: Container(
             decoration: BoxDecoration(
@@ -87,11 +90,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 GestureDetector(
                   onTap: _updateAvatar,
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundImage: _avatarImage != null ? FileImage(_avatarImage!) : null,
-                    backgroundColor: Colors.grey,
-                    child: _avatarImage == null ? Icon(Icons.person, size: 50, color: Colors.white) : null,
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundImage: _avatarImage != null ? FileImage(_avatarImage!) : AssetImage('assets/empty_avatar.png') as ImageProvider,
+                        backgroundColor: Colors.grey,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 20,
+                          child: Icon(Icons.add_a_photo, color: Colors.black),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(height: 16),
@@ -101,49 +116,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SizedBox(height: 32),
                 _buildInfoRow('Name:', _userName),
+                _buildDivider(),
                 _buildInfoRow('Age:', '$_age Years Old'),
+                _buildDivider(),
                 _buildInfoRow('Weight:', '$_weight Kg'),
+                _buildDivider(),
                 _buildInfoRow('Height:', '$_height Cm'),
                 SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => UserGoalsScreen()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                  child: Text(
-                    "User's Goals",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
+                _buildButton(context, 'User\'s Goals', UserGoalsScreen()),
                 SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => NotebookScreen()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                  child: Text(
-                    'Notebook',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
+                _buildButton(context, 'Training History', NotebookScreen()),
               ],
             ),
           ),
@@ -160,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Expanded(
             child: Text(
               label,
-              style: TextStyle(color: Colors.grey, fontSize: 16),
+              style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
           Expanded(
@@ -171,6 +153,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           Icon(Icons.edit, color: Colors.grey), // Иконка редактирования
         ],
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Divider(
+      color: Colors.grey,
+      thickness: 1,
+      height: 16,
+    );
+  }
+
+  Widget _buildButton(BuildContext context, String text, Widget screen) {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => screen),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red,
+        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        minimumSize: Size(double.infinity, 60), // Одинаковый размер кнопок
+      ),
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
       ),
     );
   }
