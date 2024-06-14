@@ -22,10 +22,25 @@ class WebViewScreen extends StatelessWidget {
         },
         onLoadStop: (controller, url) async {
           await controller.evaluateJavascript(source: """
-            document.getElementById('start-button').onclick = function() {
-              window.flutter_inappwebview.callHandler('buttonClicked');
-            };
+            document.querySelectorAll('button').forEach(button => {
+              if (button.innerText.trim() === 'START!') {
+                button.addEventListener('click', () => {
+                  window.location.href = '#button-clicked';
+                });
+              }
+            });
           """);
+        },
+        onLoadStart: (controller, url) {
+          if (url.toString().contains('#button-clicked')) {
+            controller.stopLoading();
+            SharedPreferences.getInstance().then((prefs) {
+              bool userHasData = prefs.containsKey('name') && prefs.getString('name')!.isNotEmpty;
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => userHasData ? HomeScreen() : WelcomeScreen()),
+              );
+            });
+          }
         },
       ),
     );
