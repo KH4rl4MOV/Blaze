@@ -54,15 +54,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return Scaffold(
           backgroundColor: Colors.black,
           appBar: AppBar(
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.transparent,
             elevation: 0,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            title: Text('Settings'),
+            title: Text(
+              "Settings",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
           ),
           body: Container(
             decoration: BoxDecoration(
@@ -73,10 +80,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             padding: const EdgeInsets.all(16.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Choose A Theme',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 16),
                 Row(
@@ -90,23 +98,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SizedBox(height: 32),
                 Text(
                   'Language',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 16),
-                DropdownButton<String>(
-                  value: _selectedLanguage,
-                  dropdownColor: Colors.grey[800],
-                  items: ['English', 'Русский'].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value, style: TextStyle(color: Colors.white)),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      _changeLanguage(newValue);
-                    }
-                  },
+                Row(
+                  children: [
+                    Image.asset(
+                      'assets/lang_icon.png',
+                      width: 24,
+                      height: 24,
+                    ),
+                    SizedBox(width: 32),
+                    Expanded(
+                      child: DropdownButton<String>(
+                        value: _selectedLanguage,
+                        dropdownColor: Colors.grey[800],
+                        items: ['English', 'Русский'].map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value, style: TextStyle(color: Colors.white)),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            _changeLanguage(newValue);
+                          }
+                        },
+                        iconEnabledColor: Colors.white,
+                        underline: Container(),
+                        isExpanded: true,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
