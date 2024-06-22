@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../theme_provider.dart';
 import 'notebook_screen.dart';
 import 'user_goals_screen.dart';
+import 'welcome_screen.dart'; // Ensure this import exists
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -56,6 +57,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _avatarImage = File(newImagePath);
       });
     }
+  }
+
+  Future<void> _deleteProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? avatarPath = prefs.getString('avatar_path');
+
+    if (avatarPath != null) {
+      final avatarFile = File(avatarPath);
+      if (await avatarFile.exists()) {
+        await avatarFile.delete(); // Delete the avatar file
+      }
+    }
+
+    await prefs.clear(); // Clear all user data
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => WelcomeScreen()),
+          (Route<dynamic> route) => false,
+    );
+  }
+
+  void _showDeleteConfirmation() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Deletion'),
+          content: Text('Are you sure you want to delete your profile? This action cannot be undone.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _deleteProfile();
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -126,6 +172,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _buildButton(context, 'User\'s Goals', UserGoalsScreen()),
                 SizedBox(height: 16),
                 _buildButton(context, 'Training History', NotebookScreen()),
+                SizedBox(height: 16), // Additional space before delete button
+                _buildDeleteButton(context),
               ],
             ),
           ),
@@ -151,7 +199,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
-          Icon(Icons.edit, color: Colors.grey), // Иконка редактирования
+          Icon(Icons.edit, color: Colors.grey), // Edit icon
         ],
       ),
     );
@@ -179,10 +227,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),
-        minimumSize: Size(double.infinity, 60), // Одинаковый размер кнопок
+        minimumSize: Size(double.infinity, 60), // Uniform button size
       ),
       child: Text(
         text,
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _buildDeleteButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: _showDeleteConfirmation,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red,
+        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        minimumSize: Size(double.infinity, 60), // Uniform button size
+      ),
+      child: Text(
+        'Delete Profile',
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
       ),
     );
